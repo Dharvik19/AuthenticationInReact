@@ -1,4 +1,5 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useContext } from 'react';
+import AuthContext from '../../Store/auth-context';
 
 import classes from './AuthForm.module.css';
 // const API = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyD5LBTb--rPVGy0bUQ8QPh1WcYgFf5SI1k';
@@ -7,6 +8,8 @@ const AuthForm = () => {
   const passwordInputref = useRef();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
+
+  const authCtx = useContext(AuthContext);
 
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
@@ -45,7 +48,7 @@ const AuthForm = () => {
         })
       }
     }).then(data=>{
-      console.log(data);
+      authCtx.login(data.idToken);
     }).catch(err=>{
       alert(err.message);
 
