@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 
 import classes from './AuthForm.module.css';
-const API = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyD5LBTb--rPVGy0bUQ8QPh1WcYgFf5SI1k';
+// const API = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyD5LBTb--rPVGy0bUQ8QPh1WcYgFf5SI1k';
 const AuthForm = () => {
   const emailInputRef = useRef();
   const passwordInputref = useRef();
@@ -18,31 +18,38 @@ const AuthForm = () => {
     const enteredEmail = emailInputRef.current.value;
     const enteredPassword = passwordInputref.current.value;
     setIsLogin(true);
+    let url ;
     if(isLogin){
-      
+      url = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyD5LBTb--rPVGy0bUQ8QPh1WcYgFf5SI1k'
     }else{
-      fetch(API,{
-        method: 'POST',
-        body: JSON.stringify({
-          email: enteredEmail,
-          password: enteredPassword,
-          returnSecureToken: true
-        }),
-        headers:{
-          'Content-Type': 'application/json'
-        }
-      }).then(res=>{
-        setIsLogin(false);
-        if(res.ok){
-
-        }else{
-          return res.json().then(data=>{
-            console.log(data);
-            alert(data.error.message);
-          })
-        }
-      })
+      url ='https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyD5LBTb--rPVGy0bUQ8QPh1WcYgFf5SI1k'
     }
+    fetch(url,{
+      method: 'POST',
+      body: JSON.stringify({
+        email: enteredEmail,
+        password: enteredPassword,
+        returnSecureToken: true
+      }),
+      headers:{
+        'Content-Type': 'application/json'
+      }
+    }).then(res=>{
+      setLoading(false);
+      if(res.ok){
+          return res.json();
+      }else{
+        return res.json().then(data=>{
+          console.log(data);
+          throw new Error("Authentication failed");
+        })
+      }
+    }).then(data=>{
+      console.log(data);
+    }).catch(err=>{
+      alert(err.message);
+
+    })
   }
   return (
     <section className={classes.auth}>
